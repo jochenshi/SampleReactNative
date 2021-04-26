@@ -1,10 +1,12 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {
-  View, TextInput, Text
+  View
 } from 'react-native';
+import {Input} from 'react-native-elements';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import JInput from '../../components/Input';
 
 const LoginPage = () => {
-  const [userName, setUserName] = useState('');
   return (
     <View
       style={{
@@ -13,15 +15,24 @@ const LoginPage = () => {
         alignItems: 'center'
       }}
     >
-      <TextInput
-        value={userName}
-        onChangeText={(val) => {
-          setUserName(val);
+      <Input
+        allowClear
+        placeholder='请输入用户名'
+        leftIcon={{
+          type: 'font-awesome',
+          name: 'user'
         }}
+        clearButtonMode='while-editing'
       />
-      <Text>
-        
-      </Text>
+      <JInput
+        allowClear
+        placeholder='请输入密码'
+        leftIcon={{
+          type: 'font-awesome',
+          name: 'lock'
+        }}
+        autoCompleteType='password'
+      />
     </View>
   );
 };
