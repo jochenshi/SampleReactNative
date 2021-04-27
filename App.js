@@ -14,6 +14,9 @@ const App = () => {
           <RootStack.Screen
             name='login'
             component={LoginPage}
+            options={{
+              headerShown: false
+            }}
           />
         </RootStack.Navigator>
       </NavigationContainer>
