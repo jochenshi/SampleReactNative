@@ -116,6 +116,7 @@ class LoginPage extends React.Component {
             <Button
               title='立即登录'
               loading={loading}
+              disabled={!user || !pwd}
               containerStyle={styles.button}
               onPress={this.confirmLogin}
               buttonStyle={{
