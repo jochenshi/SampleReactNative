@@ -4,6 +4,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import LoginPage from './src/pages/login';
 import DeviceListPage from './src/pages/deviceList';
+import CodeScanPage from './src/pages/codeScan';
 
 const RootStack = createStackNavigator();
 const RootScreen = RootStack.Screen;
@@ -13,7 +14,7 @@ const App = () => {
     <SafeAreaProvider>
       <NavigationContainer>
         <RootStack.Navigator
-          initialRouteName='deviceList'
+          initialRouteName='codeScan'
         >
           <RootScreen
             name='login'
@@ -28,6 +29,10 @@ const App = () => {
               title: '设备列表'
             }}
             component={DeviceListPage}
+          />
+          <RootScreen
+            name='codeScan'
+            component={CodeScanPage}
           />
         </RootStack.Navigator>
       </NavigationContainer>

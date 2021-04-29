@@ -1,24 +1,8 @@
-import React from 'react';
-import {
-  View, Text, StyleSheet
-} from 'react-native';
+import DropDownMenu from './menu';
+import DropDownItem from './item';
 
-class DropDownMenu extends React.Component {
-  render() {
-    return (
-      <View>
-        <Text>
-          asd
-        </Text>
-      </View>
-    );
-  }
-}
+export default {
+  DropDownMenu,
+  DropDownItem
+};
 
-const styles = StyleSheet.create({
-  wrapper: {
-    flex: 1
-  }
-});
-
-export default DropDownMenu;

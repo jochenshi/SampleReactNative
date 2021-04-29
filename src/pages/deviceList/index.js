@@ -5,8 +5,11 @@ import {
 import {
   Icon
 } from 'react-native-elements';
-import DropDownMenu from '../../components/dropdown';
+import DropDown from '../../components/dropdown';
 
+const {
+  DropDownMenu, DropDownItem
+} = DropDown;
 class DeviceList extends React.Component {
   render() {
     return (
@@ -38,7 +41,14 @@ class DeviceList extends React.Component {
             />
           </View>
         </View>
-        <DropDownMenu />
+        <DropDownMenu>
+          <DropDownItem
+            title='类别'
+          />
+          <DropDownItem
+            title='状态'
+          />
+        </DropDownMenu>
       </View>
     );
   }
