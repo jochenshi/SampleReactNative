@@ -1,8 +1,7 @@
 import React from 'react';
 import {
-  Input
-} from 'react-native-elements';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+  TextInput, StyleSheet
+} from 'react-native';
 
 class JInput extends React.Component {
   constructor(props) {
@@ -16,31 +15,22 @@ class JInput extends React.Component {
 
   render() {
     const {
-      clear, rightIcon, ...restProps
+      clear, ...restProps
     } = this.props;
-    const isFocused = this.input?.current?.isFocused();
-    const styleObj = {};
-    console.log({isFocused});
-    if (!isFocused) {
-      styleObj.display = 'none';
-    }
     return (
-      <Input
+      <TextInput
         {...restProps}
         ref={this.input}
-        rightIcon={(
-          <Icon
-            name='highlight-off'
-            style={styleObj}
-          />
-        )}
-        clearButtonMode='while-editing'
-        onFocus={(e) => {
-          console.log(e);
-        }}
+        style={styles.input}
       />
     );
   }
 }
+
+const styles = StyleSheet.create({
+  input: {
+    fontSize: 16
+  }
+});
 
 export default JInput;

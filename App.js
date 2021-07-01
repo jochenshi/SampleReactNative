@@ -6,6 +6,7 @@ import {Provider} from 'react-redux';
 import LoginPage from 'src/pages/login';
 import DeviceListPage from 'src/pages/deviceList';
 import CodeScanPage from 'src/pages/codeScan';
+import DeviceManualInputPage from 'src/pages/deviceManualInput';
 import store from 'src/stores';
 
 const RootStack = createStackNavigator();
@@ -19,7 +20,7 @@ const App = () => {
       <SafeAreaProvider>
         <NavigationContainer>
           <RootStack.Navigator
-            initialRouteName='login'
+            initialRouteName='deviceList'
           >
             <RootScreen
               name='login'
@@ -34,6 +35,13 @@ const App = () => {
                 title: '设备列表'
               }}
               component={DeviceListPage}
+            />
+            <RootScreen
+              name='deviceManualInput'
+              options={{
+                title: '手动输入'
+              }}
+              component={DeviceManualInputPage}
             />
             <RootScreen
               name='codeScan'

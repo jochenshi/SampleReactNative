@@ -14,7 +14,14 @@ class CodeScanPage extends React.Component {
           flex: 1
         }}
       >
-        <RNCamera />
+        <RNCamera
+          rectOfInterest={{
+            x: 0.5,
+            y: 0.5,
+            width: 100,
+            height: 100
+          }}
+        />
       </View>
     );
   }
