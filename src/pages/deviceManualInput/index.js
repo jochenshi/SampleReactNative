@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  View, StyleSheet
+  View, StyleSheet, Text
 } from 'react-native';
 import JListitem from 'src/components/ListItem';
 import JInput from 'src/components/Input';
@@ -8,6 +8,7 @@ import RNPickerSelect from 'react-native-picker-select';
 import {
   Button
 } from 'react-native-elements';
+import { JForm, JFormItem } from 'src/components/Form';
 
 class DeviceManualInputPage extends React.Component {
   constructor() {
@@ -36,6 +37,7 @@ class DeviceManualInputPage extends React.Component {
     const {
       deviceTypes = [], deviceType
     } = this.state;
+    console.log(11, this.props);
     return (
       <View
         style={styles.wrapper}
@@ -63,6 +65,21 @@ class DeviceManualInputPage extends React.Component {
             }}
           />
         </JListitem>
+        <JForm>
+          <JFormItem
+            label='设备SN号'
+            name='sn'
+          >
+            <JInput
+              placeholder='输入设备SN号'
+            />
+          </JFormItem>
+          <View
+            testProp={'1asd'}
+          >
+            <Text>asd</Text>
+          </View>
+        </JForm>
         <View
           style={styles.bottomBtn}
         >
@@ -73,6 +90,9 @@ class DeviceManualInputPage extends React.Component {
               borderRadius: 15,
               height: '100%',
               marginHorizontal: 15
+            }}
+            onPress={() => {
+              console.log(this.formRef);
             }}
           />
         </View>

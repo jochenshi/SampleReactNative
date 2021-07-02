@@ -63,7 +63,8 @@ const styles = StyleSheet.create({
     width: 100
   },
   body: {
-    color: 'red'
+    color: 'red',
+    flex: 1
   },
   bottomborder: {
     borderBottomWidth: 1,
