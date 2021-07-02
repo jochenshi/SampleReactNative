@@ -7,6 +7,7 @@ class FormItem extends React.Component {
   generateItem = (register) => {
     const {children, name, rules, defaultValue, ...extra} = this.props;
     if (children) {
+      console.log(12, rules);
       return React.cloneElement(children, {
         defaultValue,
         ...register(name, rules || {}),

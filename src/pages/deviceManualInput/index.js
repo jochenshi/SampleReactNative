@@ -9,8 +9,9 @@ import {
   Button
 } from 'react-native-elements';
 import { JForm, JFormItem } from 'src/components/Form';
+import {useForm, Controller} from 'react-hook-form';
 
-class DeviceManualInputPage extends React.Component {
+class DeviceManualInputPage1 extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -31,6 +32,7 @@ class DeviceManualInputPage extends React.Component {
       deviceSn: '',
       deviceType: undefined
     };
+    this.formRef = React.createRef();
   }
 
   render() {
@@ -69,6 +71,7 @@ class DeviceManualInputPage extends React.Component {
           <JFormItem
             label='设备SN号'
             name='sn'
+            defaultValue=''
           >
             <JInput
               placeholder='输入设备SN号'
@@ -101,6 +104,106 @@ class DeviceManualInputPage extends React.Component {
   }
 }
 
+const DeviceManualInputPage = (props) => {
+  const {
+    register, handleSubmit, formState: {errors}, control
+  } = useForm();
+
+  const confirmData = (data) => {
+    console.log(2, data);
+  };
+
+  const deviceTypes = [
+    {
+      label: 'type1',
+      value: 'type1'
+    },
+    {
+      label: 'type2',
+      value: 'type2'
+    },
+    {
+      label: 'type2',
+      value: 'type2'
+    }
+  ];
+  console.log(errors);
+
+  return (
+    <View>
+      {/* <JForm
+        register={register}
+        errors={errors}
+      >
+        <JFormItem
+          label='设备SN号'
+          name='sn'
+          rules={{
+            required: '设备SN号不能为空'
+          }}
+        >
+          <JInput
+            placeholder='输入设备SN号'
+            onChange={(e) => {
+              onChange('sn', e.target.value, {
+                shouldValidate: true
+              });
+            }}
+          />
+        </JFormItem>
+        <JFormItem
+          label='设备型号'
+          name='deviceType'
+        >
+          <RNPickerSelect
+            placeholder={{
+              label: '选择设备型号',
+              value: 'placeholder'
+            }}
+            items={deviceTypes || []}
+            onValueChange={(val) => {
+              console.log(val);
+            }}
+          />
+        </JFormItem>
+      </JForm> */}
+      <Controller
+        control={control}
+        rules={{
+          pattern: /^[A-Za-z]+$/,
+          message: 'a'
+        }}
+        render={({field: {onChange, onBlur, value}}) => (
+          <JInput
+            value={value}
+            onChangeText={onChange}
+            onBlur={onBlur}
+          />
+        )}
+        name='sn'
+        defaultValue=''
+      />
+      <JInput
+        {...register('deviceSn', {required: true})}
+      />
+      <View
+          style={styles.bottomBtn}
+        >
+          <Button
+            title='下一步'
+            color='#ffffff'
+            buttonStyle={{
+              borderRadius: 15,
+              height: '100%',
+              marginHorizontal: 15
+            }}
+            onPress={handleSubmit(confirmData)}
+          />
+        </View>
+    </View>
+  );
+};
+
 const styles = StyleSheet.create({
   wrapper: {
     marginTop: 45
@@ -110,5 +213,6 @@ const styles = StyleSheet.create({
     height: 45
   }
 });
+
 
 export default DeviceManualInputPage;

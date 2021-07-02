@@ -3,11 +3,7 @@ import {
   Text, View
 } from 'react-native';
 
-export default ({children, ...extraProps}) => {
-  console.log({extraProps});
-  const {
-      register, errors, ...extra
-  } = extraProps;
+export default ({children, errors = {}, ...extraProps}) => {
   let arr = [];
   if (children) {
     if (Array.isArray(children)) {
@@ -18,15 +14,15 @@ export default ({children, ...extraProps}) => {
   }
   return (
     <View>
-      {arr.map((item) => {
-        console.log(1, item);
+      {arr.map((item, index) => {
         return React.cloneElement(item, {
-          register,
+          key: `${item.name}_${index}`,
           error: errors[item.name],
-          ...extra,
-          ...item.props
+          ...item.props,
+          ...extraProps
         });
       })}
     </View>
   );
 };
+
