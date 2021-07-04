@@ -10,7 +10,7 @@ class JInput extends React.Component {
   }
 
   componentDidMount() {
-    console.log(this.input);
+    console.log('props', this.props);
   }
 
   render() {

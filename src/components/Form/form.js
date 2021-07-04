@@ -15,9 +15,10 @@ export default ({children, errors = {}, ...extraProps}) => {
   return (
     <View>
       {arr.map((item, index) => {
+        const itemName = item?.props?.name;
         return React.cloneElement(item, {
-          key: `${item.name}_${index}`,
-          error: errors[item.name],
+          key: `${itemName}_${index}`,
+          error: errors[itemName],
           ...item.props,
           ...extraProps
         });

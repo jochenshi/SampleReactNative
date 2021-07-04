@@ -106,11 +106,11 @@ class DeviceManualInputPage1 extends React.Component {
 
 const DeviceManualInputPage = (props) => {
   const {
-    register, handleSubmit, formState: {errors}, control
+    register, handleSubmit, formState: {errors}, control, setValue
   } = useForm();
 
   const confirmData = (data) => {
-    console.log(2, data);
+    console.log('get data', data);
   };
 
   const deviceTypes = [
@@ -127,11 +127,11 @@ const DeviceManualInputPage = (props) => {
       value: 'type2'
     }
   ];
-  console.log(errors);
+  console.log('errors', errors);
 
   return (
     <View>
-      {/* <JForm
+      <JForm
         register={register}
         errors={errors}
       >
@@ -139,13 +139,16 @@ const DeviceManualInputPage = (props) => {
           label='设备SN号'
           name='sn'
           rules={{
-            required: '设备SN号不能为空'
+            required: {
+              value: true,
+              message: '设备SN号不能为空'
+            }
           }}
         >
           <JInput
             placeholder='输入设备SN号'
-            onChange={(e) => {
-              onChange('sn', e.target.value, {
+            onChangeText={(txt) => {
+              setValue('sn', txt, {
                 shouldValidate: true
               });
             }}
@@ -154,38 +157,28 @@ const DeviceManualInputPage = (props) => {
         <JFormItem
           label='设备型号'
           name='deviceType'
+          rules={{
+            required: {
+              value: true,
+              message: '设备型号不能为空'
+            }
+          }}
         >
           <RNPickerSelect
             placeholder={{
               label: '选择设备型号',
-              value: 'placeholder'
+              value: null
             }}
             items={deviceTypes || []}
             onValueChange={(val) => {
               console.log(val);
+              setValue('deviceType', val, {
+                shouldValidate: true
+              });
             }}
           />
         </JFormItem>
-      </JForm> */}
-      <Controller
-        control={control}
-        rules={{
-          pattern: /^[A-Za-z]+$/,
-          message: 'a'
-        }}
-        render={({field: {onChange, onBlur, value}}) => (
-          <JInput
-            value={value}
-            onChangeText={onChange}
-            onBlur={onBlur}
-          />
-        )}
-        name='sn'
-        defaultValue=''
-      />
-      <JInput
-        {...register('deviceSn', {required: true})}
-      />
+      </JForm>
       <View
           style={styles.bottomBtn}
         >
