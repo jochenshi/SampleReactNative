@@ -9,7 +9,8 @@ import Dropdown from '../../components/DropDownMenu';
 
 class DeviceList extends React.Component {
   state = {
-    visible: false
+    visible: false,
+    deviceList: []
   };
 
   render() {
