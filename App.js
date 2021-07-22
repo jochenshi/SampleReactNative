@@ -13,9 +13,13 @@ import DeviceInitNetPage from 'src/pages/deviceInitNet';
 import DeviceInitApnPage from 'src/pages/deviceInitApn';
 import DeviceRegistPage from 'src/pages/deviceRegist';
 import store from 'src/stores';
+import 'src/mock/server.js';
+import {initalizeRequest} from 'util/request';
 
 const RootStack = createStackNavigator();
 const RootScreen = RootStack.Screen;
+
+initalizeRequest();
 
 const App = () => {
   return (
@@ -25,7 +29,7 @@ const App = () => {
       <SafeAreaProvider>
         <NavigationContainer>
           <RootStack.Navigator
-            initialRouteName='deviceInit'
+            initialRouteName='deviceList'
           >
             <RootScreen
               name='login'

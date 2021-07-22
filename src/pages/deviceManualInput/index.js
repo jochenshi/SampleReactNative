@@ -1,8 +1,7 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
-  View, StyleSheet, Text
+  View, StyleSheet
 } from 'react-native';
-import JListitem from 'src/components/ListItem';
 import JInput from 'src/components/Input';
 import RNPickerSelect from 'react-native-picker-select';
 import {
@@ -10,32 +9,30 @@ import {
 } from 'react-native-elements';
 import { JForm, JFormItem } from 'src/components/Form';
 import {useForm} from 'react-hook-form';
+import {useDispatch, useSelector} from 'react-redux';
+import {
+  fetchDeviceTypes, setDeviceMacAndType
+} from 'src/slices/deviceRegistSlice.js';
 
 const DeviceManualInputPage = (props) => {
   const {
-    register, handleSubmit, formState: {errors}, control, setValue
+    register, handleSubmit, formState: {errors}, control, setValue, getValues
   } = useForm();
+  const dispatch = useDispatch();
+  const deviceTypeArr = useSelector(state => state.deviceRegister.deviceTypeArr);
+
+  useEffect(() => {
+    dispatch(fetchDeviceTypes());
+  }, []);
 
   const confirmData = (data) => {
     console.log('get data', data);
+    dispatch(setDeviceMacAndType(data));
     props.navigation.push('deviceInit');
   };
 
-  const deviceTypes = [
-    {
-      label: 'type1',
-      value: 'type1'
-    },
-    {
-      label: 'type2',
-      value: 'type2'
-    },
-    {
-      label: 'type2',
-      value: 'type2'
-    }
-  ];
-  console.log('errors', errors);
+  const macTxt = getValues('deviceMac');
+  const deviceType = getValues('deviceType');
 
   return (
     <View>
@@ -45,7 +42,7 @@ const DeviceManualInputPage = (props) => {
       >
         <JFormItem
           label='设备SN号'
-          name='mac'
+          name='deviceMac'
           rules={{
             required: {
               value: true,
@@ -55,8 +52,9 @@ const DeviceManualInputPage = (props) => {
         >
           <JInput
             placeholder='输入设备SN号'
+            value={macTxt}
             onChangeText={(txt) => {
-              setValue('mac', txt, {
+              setValue('deviceMac', (txt || '').toLowerCase().trim(), {
                 shouldValidate: true
               });
             }}
@@ -72,14 +70,15 @@ const DeviceManualInputPage = (props) => {
             }
           }}
         >
+
           <RNPickerSelect
             placeholder={{
               label: '选择设备型号',
               value: null
             }}
-            items={deviceTypes || []}
+            value={deviceType}
+            items={deviceTypeArr || []}
             onValueChange={(val) => {
-              console.log(val);
               setValue('deviceType', val, {
                 shouldValidate: true
               });

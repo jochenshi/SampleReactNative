@@ -5,9 +5,14 @@ import {
 import {
   ListItem, Button
 } from 'react-native-elements';
+import {useSelector} from 'react-redux';
 
 const DeviceInitPage = (props) => {
   const [isDhcp, setIsDhcp] = useState(false);
+
+  const confirmData = () => {
+    props.navigation.push('deviceRegist');
+  };
 
   return (
     <View>
@@ -57,9 +62,12 @@ const DeviceInitPage = (props) => {
         onPress={() => {
           props.navigation.push('deviceInitApn');
         }}
+        disabled={isDhcp}
       >
         <ListItem.Content>
-          <ListItem.Title>
+          <ListItem.Title
+            style={isDhcp ? styles.disableListStyle : {}}
+          >
             无线网络
           </ListItem.Title>
         </ListItem.Content>
@@ -71,9 +79,7 @@ const DeviceInitPage = (props) => {
         <Button
           title='下一步'
           buttonStyle={styles.button}
-          onPress={() => {
-            props.navigation.push('deviceRegist');
-          }}
+          onPress={confirmData}
         />
       </View>
     </View>
@@ -91,6 +97,9 @@ const styles = StyleSheet.create({
   listContentView: {
     flex: 1,
     alignItems: 'flex-end'
+  },
+  disableListStyle: {
+    color: '#e3e3e3'
   },
   firstList: {
     paddingTop: 21
