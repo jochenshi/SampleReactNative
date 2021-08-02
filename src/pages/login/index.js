@@ -68,12 +68,12 @@ class LoginPage extends React.Component {
               allowClear
               placeholder='请输入用户名'
               inputStyle={styles.input}
-              leftIcon={{
-                type: 'font-awesome',
-                name: 'user',
-                color: '#fff',
-                size: 20
-              }}
+              // leftIcon={{
+              //   type: 'font-awesome',
+              //   name: 'user',
+              //   color: '#fff',
+              //   size: 20
+              // }}
               clearButtonMode='while-editing'
               onChangeText={val => {
                 this.setState({
@@ -89,21 +89,21 @@ class LoginPage extends React.Component {
               inputStyle={styles.input}
               allowClear
               placeholder='请输入密码'
-              leftIcon={{
-                type: 'font-awesome',
-                name: 'lock',
-                color: '#fff',
-                size: 20
-              }}
+              // leftIcon={{
+              //   type: 'font-awesome',
+              //   name: 'lock',
+              //   color: '#fff',
+              //   size: 20
+              // }}
               style={{
                 color: '#fff'
               }}
-              rightIcon={{
-                type: 'font-awesome',
-                name: passwordVisible ? 'eye' : 'eye-slash',
-                onPress: this.switchPasswordVisible,
-                color: '#fff'
-              }}
+              // rightIcon={{
+              //   type: 'font-awesome',
+              //   name: passwordVisible ? 'eye' : 'eye-slash',
+              //   onPress: this.switchPasswordVisible,
+              //   color: '#fff'
+              // }}
               placeholderTextColor='#e0dddd'
               secureTextEntry={!passwordVisible}
               clearButtonMode='while-editing'

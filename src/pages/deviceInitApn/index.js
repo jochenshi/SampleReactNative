@@ -1,134 +1,162 @@
 import React from 'react';
 import {
-  View, StyleSheet
+  View, StyleSheet, Text
 } from 'react-native';
-import {Button} from 'react-native-elements';
-import JInput from 'src/components/Input';
-import {JForm, JFormItem} from 'src/components/Form';
-import {useForm} from 'react-hook-form';
+import {
+  Button, List, InputItem
+} from '@ant-design/react-native';
 import {newTrim} from 'util/util.js';
-import {useDispatch} from 'react-redux';
+import {connect} from 'react-redux';
+import {createForm} from 'rc-form';
 import {
   setApnInfo
 } from 'src/slices/deviceRegistSlice.js';
 
+const ListItem = List.Item;
 
-const DeviceInitApnPage = (props) => {
-  const {
-    register, handleSubmit, formState: {errors}, getValues, setValue
-  } = useForm();
-
-  const dispatch = useDispatch();
-
-  const confirmData = (data) => {
-    console.log(data);
-    dispatch(setApnInfo(data));
-    props.navigation.goBack();
+class DeviceInitApnPage extends React.Component {
+  confirmForm = () => {
+    this.props.form.validateFields((err, value) => {
+      if (!err) {
+        console.log(value);
+        this.props.dispatch(setApnInfo(value));
+      }
+    });
   };
 
-  const validateForm = (dataIndex) => {
-    const [data1, data2, data3] = getValues(['apn', 'username', 'password']);
-    const apn = newTrim(data1);
-    const user = newTrim(data2);
-    const password = newTrim(data3);
+  formatErrorTxt = (dataIndex) => {
+    const {getFieldError} = this.props.form;
+    const error = getFieldError(dataIndex);
+    if (error) {
+      return (
+        <Text
+          style={styles.errorTxt}
+        >
+          {error.join(',')}
+        </Text>
+      );
+    }
+    return undefined;
+  };
+
+  validateForm = (dataIndex, value, callback) => {
+    const data = this.props.form.getFieldsValue(['apn', 'username', 'password']);
+    const apn = newTrim(data?.apn);
+    const user = newTrim(data?.username);
+    const password = newTrim(data?.password); 
     if (dataIndex === 'apn') {
       if ((user || password) && !apn) {
-        return '请输入APN';
+        callback('请输入APN');
+      } else {
+        callback();
       }
-      return true;
     }
 
     if (dataIndex === 'username') {
       if ((apn || password) && !user) {
-        return '请输入用户名';
+        callback('请输入用户名');
+      } else {
+        callback();
       }
-      return true;
     }
 
     if (dataIndex === 'password') {
       if ((apn || user) && !password) {
-        return '请输入密码';
+        callback('请输入密码');
+      } else {
+        callback();
       }
-      return true;
     }
   };
 
-  return (
-    <View>
-      <View
-        style={styles.mainWrapper}
-      >
-        <JForm
-          register={register}
-          errors={errors}
+  render() {
+    const {form} = this.props;
+    const {getFieldProps} = form;
+    return (
+      <View>
+        <List
+          style={styles.mainWrapper}
+          renderFooter={() => this.formatErrorTxt('apn')}
         >
-          <JFormItem
-            label='APN'
-            name='apn'
-            rules={{
-              validate: () => validateForm('apn')
-            }}
+          <InputItem
+            labelNumber={7}
+            placeholder='输入APN'
+            {...getFieldProps('apn', {
+              rules: [
+                {
+                  validator: (rule, value, callback) => {
+                    this.validateForm('apn', value, callback);
+                  }
+                }
+              ]
+            })}
           >
-            <JInput
-              placeholder='输入APN'
-              onChangeText={(txt) => {
-                setValue('apn', txt || '', {
-                  shouldValidate: true
-                })
-              }}
-            />
-          </JFormItem>
-          <JFormItem
-            label='用户名'
-            name='username'
-            rules={{
-              validate: () => validateForm('username')
-            }}
+            <ListItem>
+              APN
+            </ListItem>
+          </InputItem>
+        </List>
+        <List
+          renderFooter={() => this.formatErrorTxt('username')}
+        >
+          <InputItem
+            labelNumber={7}
+            placeholder='输入用户名'
+            {...getFieldProps('username', {
+              rules: [
+                {
+                  validator: (rule, value, callback) => {
+                    this.validateForm('username', value, callback);
+                  }
+                }
+              ]
+            })}
           >
-            <JInput
-              placeholder='输入用户名'
-              onChangeText={(txt) => {
-                setValue('username', txt || '', {
-                  shouldValidate: true
-                })
-              }}
-            />
-          </JFormItem>
-          <JFormItem
-            label='密码'
-            name='password'
-            rules={{
-              validate: () => validateForm('password')
-            }}
+            <ListItem>
+              用户名
+            </ListItem>
+          </InputItem>
+        </List>
+        <List
+          renderFooter={() => this.formatErrorTxt('password')}
+        >
+          <InputItem
+            labelNumber={7}
+            placeholder='输入密码'
+            {...getFieldProps('password', {
+              rules: [
+                {
+                  validator: (rule, value, callback) => {
+                    this.validateForm('password', value, callback);
+                  }
+                }
+              ]
+            })}
           >
-            <JInput
-              placeholder='输入密码'
-              onChangeText={(txt) => {
-                setValue('password', txt || '', {
-                  shouldValidate: true
-                })
-              }}
-              secureTextEntry
-            />
-          </JFormItem>
-        </JForm>
+            <ListItem>
+              密码
+            </ListItem>
+          </InputItem>
+        </List>
+        <View
+          style={styles.bottomBtn}
+        >
+          <Button
+            style={styles.button}
+            onPress={this.confirmForm}
+            type='primary'
+          >
+            下一步
+          </Button>
+        </View>
       </View>
-      <View
-        style={styles.bottomBtn}
-      >
-        <Button
-          title='下一步'
-          buttonStyle={styles.button}
-          onPress={handleSubmit(confirmData)}
-        />
-      </View>
-    </View>
-  );
-};
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   mainWrapper: {
-    marginTop: 20
+    marginTop: 45
   },
   bottomBtn: {
     marginTop: 60,
@@ -138,7 +166,11 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     height: '100%',
     marginHorizontal: 20
+  },
+  errorTxt: {
+    color: 'red',
+    padding: 5
   }
 });
 
-export default DeviceInitApnPage;
+export default connect()(createForm()(DeviceInitApnPage));

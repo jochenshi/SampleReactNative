@@ -1,94 +1,119 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {
-  View, Switch, StyleSheet
+  View, StyleSheet
 } from 'react-native';
 import {
-  ListItem, Button
-} from 'react-native-elements';
-import {useSelector} from 'react-redux';
+  List, Button, Toast, Modal, Switch
+} from '@ant-design/react-native';
+import {connect} from 'react-redux';
+import {createForm} from 'rc-form';
+import {
+  setDhcp
+} from 'src/slices/deviceRegistSlice.js';
 
-const DeviceInitPage = (props) => {
-  const [isDhcp, setIsDhcp] = useState(false);
+const ListItem = List.Item;
 
-  const confirmData = () => {
-    props.navigation.push('deviceRegist');
+class DeviceInitPage extends React.Component {
+  confirmForm = () => {
+    // this.props.navigation.push('deviceRegist');
+    console.log(this.props);
+    const {store, dispatch, form} = this.props;
+    const {
+      netPort
+    } = store || {};
+    if (!netPort) {
+      Toast.fail('请检查有线网络配置');
+    } else {
+      dispatch(setDhcp(form.getFieldValue('isDhcp')));
+      Modal.alert('', '请确认以上操作！', [
+        {
+          text: '取消'
+        },
+        {
+          text: '确认',
+          onPress: () => {
+            this.props.navigation.push('deviceRegist');
+          }
+        }
+      ])
+    }
   };
 
-  return (
-    <View>
-      <ListItem
-        bottomDivider
-        topDivider
-        style={styles.firstList}
-      >
-        <ListItem.Content
-          style={styles.listContentWithOther}
+  render() {
+    const {form, navigation, route: {params: {deviceType}}} = this.props;
+    const {getFieldProps, getFieldValue} = form;
+    console.log(this.state);
+    const isDhcp = getFieldValue('isDhcp')
+    return (
+      <View>
+        <List
+          style={styles.wrapper}
         >
-          <ListItem.Title>
+          <ListItem
+            extra={(
+              <Switch
+                color='#0A6EFA'
+                {...getFieldProps('isDhcp', {
+                  valuePropName: 'checked',
+                  initialValue: false
+                })}
+              />
+            )}
+          >
             DHCP
-          </ListItem.Title>
-          <View
-            style={styles.listContentView}
+          </ListItem>
+          <ListItem
+            arrow='horizontal'
+            onPress={() => {
+              navigation.push('deviceInitNet', {
+                isDhcp,
+                deviceType
+              })
+            }}
           >
-            <Switch
-              value={isDhcp}
-              onValueChange={() => {
-                setIsDhcp(!isDhcp);
-              }}
-              trackColor={{
-                true: '#0A6EFA'
-              }}
-            />
-          </View>
-        </ListItem.Content>
-      </ListItem>
-      <ListItem
-        bottomDivider
-        containerStyle={styles.listContainer}
-        onPress={() => {
-          props.navigation.push('deviceInitNet');
-        }}
-      >
-        <ListItem.Content>
-          <ListItem.Title>
             有线网络
-          </ListItem.Title>
-        </ListItem.Content>
-        <ListItem.Chevron />
-      </ListItem>
-      <ListItem
-        bottomDivider
-        containerStyle={styles.listContainer}
-        onPress={() => {
-          props.navigation.push('deviceInitApn');
-        }}
-        disabled={isDhcp}
-      >
-        <ListItem.Content>
-          <ListItem.Title
-            style={isDhcp ? styles.disableListStyle : {}}
+          </ListItem>
+          <View
+            pointerEvents={isDhcp ? 'none' : 'auto'}
           >
-            无线网络
-          </ListItem.Title>
-        </ListItem.Content>
-        <ListItem.Chevron />
-      </ListItem>
-      <View
-        style={styles.bottomBtn}
-      >
-        <Button
-          title='下一步'
-          buttonStyle={styles.button}
-          onPress={confirmData}
-        />
+            <ListItem
+              arrow='horizontal'
+              disabled={isDhcp}
+              onPress={() => {
+                if (!isDhcp) {
+                  navigation.push('deviceInitApn');
+                }
+              }}
+              style={{
+                opacity: isDhcp ? 0.4 : 1
+              }}
+            >
+              无线网络
+            </ListItem>
+          </View>
+        </List>
+        <View
+          style={styles.bottomBtn}
+        >
+          <Button
+            type='primary'
+            style={styles.button}
+            onPress={this.confirmForm}
+          >
+            下一步
+          </Button>
+        </View>
       </View>
-    </View>
-  );
-};
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   listContainer: {
     height: 59.4
+  },
+  wrapper: {
+    marginTop: 45
   },
   listContentWithOther: {
     alignItems: 'center',
@@ -101,9 +126,6 @@ const styles = StyleSheet.create({
   disableListStyle: {
     color: '#e3e3e3'
   },
-  firstList: {
-    paddingTop: 21
-  },
   bottomBtn: {
     marginTop: 60,
     height: 45
@@ -115,4 +137,8 @@ const styles = StyleSheet.create({
   }
 });
 
-export default DeviceInitPage;
+const mapStateToProps = (state) => ({
+  store: state.deviceRegist || {}
+}); 
+
+export default connect(mapStateToProps)(createForm()(DeviceInitPage));

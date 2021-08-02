@@ -1,104 +1,146 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {
-  View, StyleSheet
+  View, StyleSheet, Text
 } from 'react-native';
-import JInput from 'src/components/Input';
-import RNPickerSelect from 'react-native-picker-select';
 import {
-  Button
-} from 'react-native-elements';
-import { JForm, JFormItem } from 'src/components/Form';
-import {useForm} from 'react-hook-form';
-import {useDispatch, useSelector} from 'react-redux';
+  List, Picker, InputItem, Button, ActivityIndicator
+} from '@ant-design/react-native';
 import {
-  fetchDeviceTypes, setDeviceMacAndType
+  createForm
+} from 'rc-form';
+import {
+  connect
+} from 'react-redux';
+import {
+  fetchDeviceTypes, setDeviceMacAndType, resetNetAndApn
 } from 'src/slices/deviceRegistSlice.js';
 
-const DeviceManualInputPage = (props) => {
-  const {
-    register, handleSubmit, formState: {errors}, control, setValue, getValues
-  } = useForm();
-  const dispatch = useDispatch();
-  const deviceTypeArr = useSelector(state => state.deviceRegister.deviceTypeArr);
+const ListItem = List.Item;
 
-  useEffect(() => {
+class DeviceManualInputPage extends React.Component {
+  componentDidMount() {
+    console.log('1', this.props);
+    const {
+      dispatch
+    } = this.props;
     dispatch(fetchDeviceTypes());
-  }, []);
+  }
 
-  const confirmData = (data) => {
-    console.log('get data', data);
-    dispatch(setDeviceMacAndType(data));
-    props.navigation.push('deviceInit');
+  confirmForm = () => {
+    this.props.form.validateFields((err, value) => {
+      if (!err) {
+        const {
+          dispatch, navigation
+        } = this.props;
+        const {
+          deviceMac, deviceType
+        } = value;
+        dispatch(setDeviceMacAndType({
+          deviceMac,
+          deviceType: deviceType[0]
+        }));
+        dispatch(resetNetAndApn());
+        navigation.push('deviceInit', {
+          deviceType
+        });
+      }
+    });
   };
 
-  const macTxt = getValues('deviceMac');
-  const deviceType = getValues('deviceType');
-
-  return (
-    <View>
-      <JForm
-        register={register}
-        errors={errors}
-      >
-        <JFormItem
-          label='设备SN号'
-          name='deviceMac'
-          rules={{
-            required: {
-              value: true,
-              message: '设备SN号不能为空'
-            }
-          }}
+  formatErrorTxt = (dataIndex) => {
+    const {getFieldError} = this.props.form;
+    const error = getFieldError(dataIndex);
+    if (error) {
+      return (
+        <Text
+          style={styles.errorTxt}
         >
-          <JInput
-            placeholder='输入设备SN号'
-            value={macTxt}
-            onChangeText={(txt) => {
-              setValue('deviceMac', (txt || '').toLowerCase().trim(), {
-                shouldValidate: true
-              });
-            }}
-          />
-        </JFormItem>
-        <JFormItem
-          label='设备型号'
-          name='deviceType'
-          rules={{
-            required: {
-              value: true,
-              message: '设备型号不能为空'
-            }
-          }}
-        >
+          {error.join(',')}
+        </Text>
+      );
+    }
+    return undefined;
+  };
 
-          <RNPickerSelect
-            placeholder={{
-              label: '选择设备型号',
-              value: null
-            }}
-            value={deviceType}
-            items={deviceTypeArr || []}
-            onValueChange={(val) => {
-              setValue('deviceType', val, {
-                shouldValidate: true
-              });
-            }}
-          />
-        </JFormItem>
-      </JForm>
+  render() {
+    const {store: {deviceTypeArr, loading}, form} = this.props;
+    const {
+      getFieldProps
+    } = form;
+    console.log({deviceTypeArr});
+    return (
       <View
+        style={{
+          height: '100%'
+        }}
+      >
+        <ActivityIndicator
+          toast
+          text='加载中...'
+          animating={loading}
+        />
+        <View
+          style={styles.wrapper}
+        >
+          <List
+            renderFooter={() => this.formatErrorTxt('deviceMac')}
+          >
+            <InputItem
+              placeholder='输入设备SN号'
+              labelNumber="7"
+              {...getFieldProps('deviceMac', {
+                rules: [
+                  {
+                    required: true,
+                    whitespace: true,
+                    message: '输入设备SN号'
+                  }
+                ],
+                normalize: (v) => (v || '').toLowerCase()
+              })}
+            >
+              设备SN号
+            </InputItem>
+          </List>
+          <List
+            renderFooter={() => this.formatErrorTxt('deviceType')}
+          >
+            <Picker
+              data={deviceTypeArr || []}
+              cols={1}
+              extra='选择设备型号'
+              {...getFieldProps('deviceType', {
+                rules: [
+                  {
+                    required: true,
+                    message: '选择设备型号'
+                  }
+                ]
+              })}
+            >
+              <ListItem
+                arrow='horizontal'
+              >
+                设备型号
+              </ListItem>
+            </Picker>
+          </List>
+        </View>
+        <View
           style={styles.bottomBtn}
         >
           <Button
-            title='下一步'
-            color='#ffffff'
-            buttonStyle={styles.button}
-            onPress={handleSubmit(confirmData)}
-          />
+            style={styles.button}
+            type='primary'
+            onPress={this.confirmForm}
+          >
+            下一步
+          </Button>
         </View>
-    </View>
-  );
-};
+      </View>
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -112,8 +154,15 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     height: '100%',
     marginHorizontal: 20
+  },
+  errorTxt: {
+    color: 'red',
+    padding: 5
   }
 });
 
+const mapStateToProps = (state) => ({
+  store: state.deviceRegist || {}
+});
 
-export default DeviceManualInputPage;
+export default connect(mapStateToProps)(createForm()(DeviceManualInputPage));

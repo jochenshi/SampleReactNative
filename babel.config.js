@@ -11,6 +11,7 @@ module.exports = {
           util: './src/utils'
         }
       }
-    ]
+    ],
+    ["import", { libraryName: "@ant-design/react-native" }]
   ]
 };
